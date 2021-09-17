@@ -8,6 +8,7 @@ import torch.utils.data as data
 from PIL import Image
 import torchvision.transforms as transforms
 from abc import ABC, abstractmethod
+from torchvision.transforms import InterpolationMode
 
 
 class BaseDataset(data.Dataset, ABC):
@@ -79,7 +80,7 @@ def get_params(opt, size):
     return {'crop_pos': (x, y), 'flip': flip}
 
 
-def get_transform(opt, params=None, grayscale=False, method=Image.BICUBIC, convert=True):
+def get_transform(opt, params=None, grayscale=False, method=InterpolationMode.BICUBIC, convert=True):
     transform_list = []
     if grayscale:
         transform_list.append(transforms.Grayscale(1))
@@ -131,7 +132,7 @@ def get_transform(opt, params=None, grayscale=False, method=Image.BICUBIC, conve
     return transforms.Compose(transform_list)
 
 
-def __make_power_2(img, base, method=Image.BICUBIC):
+def __make_power_2(img, base, method=InterpolationMode.BICUBIC):
     ow, oh = img.size
     h = int(round(oh / base) * base)
     w = int(round(ow / base) * base)
@@ -141,7 +142,7 @@ def __make_power_2(img, base, method=Image.BICUBIC):
     return img.resize((w, h), method)
 
 
-def __random_zoom(img, target_width, crop_width, method=Image.BICUBIC, factor=None):
+def __random_zoom(img, target_width, crop_width, method=InterpolationMode.BICUBIC, factor=None):
     if factor is None:
         zoom_level = np.random.uniform(0.8, 1.0, size=[2])
     else:
@@ -153,7 +154,7 @@ def __random_zoom(img, target_width, crop_width, method=Image.BICUBIC, factor=No
     return img
 
 
-def __scale_shortside(img, target_width, crop_width, method=Image.BICUBIC):
+def __scale_shortside(img, target_width, crop_width, method=InterpolationMode.BICUBIC):
     ow, oh = img.size
     shortside = min(ow, oh)
     if shortside >= target_width:
@@ -180,7 +181,7 @@ def __trim(img, trim_width):
     return img.crop((xstart, ystart, xend, yend))
 
 
-def __scale_width(img, target_width, crop_width, method=Image.BICUBIC):
+def __scale_width(img, target_width, crop_width, method=InterpolationMode.BICUBIC):
     ow, oh = img.size
     if ow == target_width and oh >= crop_width:
         return img
@@ -216,7 +217,7 @@ def __patch(img, index, size):
 
 def __flip(img, flip):
     if flip:
-        return img.transpose(Image.FLIP_LEFT_RIGHT)
+        return img.transpose(InterpolationMode.FLIP_LEFT_RIGHT)
     return img
 
 

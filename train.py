@@ -4,6 +4,8 @@ from options.train_options import TrainOptions
 from data import create_dataset
 from models import create_model
 from util.visualizer import Visualizer
+from PIL import Image
+Image.MAX_IMAGE_PIXELS = None
 
 
 if __name__ == '__main__':
